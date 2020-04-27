@@ -80,8 +80,7 @@ while wod_prompt != 'done':
         #     possible_misspelled.append(wod_prompt)
         # TO USE THIS I"LL HAVE TO MAKE THIS WHOLE THING A FUNCTION. DONT WANNA DO TAHT NOW
 
-        else:
-            pass
+
 
     wod_prompt = input(
         'Please enter another movement in your workout...\n\t(Press Enter to add another movement to The Warmup '
@@ -137,8 +136,7 @@ def what_focus():
     for j in list(exercises.keys()):
         if (fuzz.ratio(focus, j)) > 80:
             focus_of_wod.append(j)
-        else:
-            pass
+
 
 
 def check_length_of_wod():
@@ -174,7 +172,7 @@ elif exercises[focus_item1]['loaded'] == 'kb':
 else:
     add_time = 0
     added_time = False
-    pass
+
 
 ### GET THE CATEGORIES OF exercises
 
@@ -187,8 +185,7 @@ def search_for_cat():
         for k, v in exercises.items():
             if w.lower() == k.lower():
                 mov_cat.append(v['category'])
-            else:
-                pass
+
 
     print(f'The categories of their movement are {mov_cat}')
     print()
@@ -208,8 +205,7 @@ def find_warmups_from_cat():
         for k, v in warmups.items():
             if cat in v['categories']:
                 todays_warmups.append(k)
-            else:
-                pass
+
     print()
     print(f'The possible bodyweight warmups for today\'s workout are: \n{todays_warmups}')
     print()
@@ -286,8 +282,7 @@ def list_of_warmup_times():
         for k2, v2 in warmups.items():
             if k == k2:
                 total_bw_time_list.append(v2['time'])
-            else:
-                pass
+
 
 
 list_of_warmup_times()
@@ -329,14 +324,13 @@ def get_random_metcon_warmup():
             get_rand_warm_metcon_reps = get_rand_warm_metcon_values.get('reps')
             get_rand_warm_metcon_time = get_rand_warm_metcon_values.get('time')
             random_metcon_reps = random.choice(get_rand_warm_metcon_reps)
-        else:
-            pass
 
-    return get_rand_warm_metcon_key
-    return get_rand_warm_metcon_values
-    return get_rand_warm_metcon_reps
-    return get_rand_warm_metcon_time
-    return random_metcon_reps
+
+    # return get_rand_warm_metcon_key
+    # return get_rand_warm_metcon_values
+    # return get_rand_warm_metcon_reps
+    # return get_rand_warm_metcon_time
+    # return random_metcon_reps
 
 
 print()
@@ -440,8 +434,7 @@ def check_time_add_wu_metcon():
         print('Perform:',get_rand_warm_metcon_key.title(), 'for', random_metcon_reps)
         print()
         input('Press enter to move onto your bodyweight warmups...')
-    else:
-        pass
+
 
 
 def loaded_video_adder():
