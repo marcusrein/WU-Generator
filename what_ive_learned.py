@@ -51,6 +51,8 @@
 # -randomized metcom warmup
 # -(in distant future)Save user history and randomize future warmups. Use facebook login.
 # -cant get wod_prompt to work how i want
+##-Tensorflow movement analysis
+
 
 ### Jordan:
 # github push, pull, merge to github. to and from codeanywhere/replit and my pycharm.

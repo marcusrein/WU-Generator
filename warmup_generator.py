@@ -5,10 +5,7 @@ Created on Fri Apr 24 06:31:13 2020
 
 @author: MarcusMBP
 """
-print('testerrrr 4/27')
-print('testerrr again')
-print('testerrrrrweeee')
-print('paaawweer')
+
 import re
 from random import choice
 import random
@@ -462,9 +459,6 @@ def loaded_video_adder():
                     print('Do this',w,'warmup:')
                     print(v['reg_warm'])
                 elif v['category'] == 'squats':
-                    print('Do this',w,'warmup:')
-                    print(v['reg_warm'])
-                elif v['category'] == 'cleans':
                     print('Do this',w,'warmup:')
                     print(v['reg_warm'])
                 elif v['category'] == 'snatches':
