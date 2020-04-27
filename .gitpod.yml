@@ -1,5 +1,7 @@
 tasks:
   - init: pip install fuzzywuzzy
-    command: pip install fuzzywuzzy
+          pip install fuzz
+          pip install python-Levenshtein
+    command: ()
 image:
   file: .gitpod.Dockerfile
