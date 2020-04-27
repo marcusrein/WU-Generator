@@ -8,6 +8,7 @@ Created on Fri Apr 24 06:31:13 2020
 print('testerrrr 4/27')
 print('testerrr again')
 print('testerrrrrweeee')
+print('paaawweer')
 import re
 from random import choice
 import random
