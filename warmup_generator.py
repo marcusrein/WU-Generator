@@ -34,6 +34,28 @@ def welcome():
     print('<<<Welcome to the Warmup Generator!>>>')
     print(big_spacing)
 
+
+# ALTERNATE CODE FOR TRYING OUT WOD INTENSITY AS OPPOSED TO A TIMER
+
+# while True:
+#     wod_intensity = input(f'What is the intensity of your WOD today? Please enter \'Low\', \'Medium\', or \'High\'\n>>>')
+#     if wod_intensity.lower() not in ('low', 'medium', 'high'):
+#         print('Please enter the correct information!')
+#     else:
+#         break
+
+# def time_prompt_func():
+#     '''Creates time prompt based on intensity'''
+#     global time_prompt
+#     if wod_intensity == 'low':
+#         time_prompt = 20
+#     elif wod_intensity == 'medium':
+#         time_prompt = 25
+#     elif wod_intensity == 'high':
+#         time_prompt = 30
+
+
+
 def time_prompt_func():
     '''Updates the time_prompt global variable. Asks the 'how much time' question and cleans it up'''
     global time_prompt
