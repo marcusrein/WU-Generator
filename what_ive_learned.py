@@ -59,3 +59,7 @@
 #integrate movement analysis
 #3 apps. warmup generator. movement analsysis kbs. bbs
 #installing tensorflow. virtual environemnts?
+
+
+##BUGS
+# 1. 10min doesnt work for some reason
