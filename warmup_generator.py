@@ -26,21 +26,13 @@ exercises = exercises_dataset.get_exercises()
 warmups = warmups_dataset.get_warmups()
 warmup_metcons = warmups_dataset.get_warmup_metcons()
 
-
-### GET THE TIME FOR YOUR WARMUP
+""" FUNCTION LIST"""
 
 def welcome():
+    '''Prints welcome message'''
     print()
     print('<<<Welcome to the Warmup Generator!>>>')
     print(big_spacing)
-
-
-welcome()
-
-### GET WARMUP TIME AVAILABLE TO USER
-
-time_prompt = 0
-
 
 def time_prompt_func():
     '''Updates the time_prompt global variable. Asks the 'how much time' question and cleans it up'''
@@ -56,13 +48,143 @@ def time_prompt_func():
     return time_prompt
 
 
+def loaded_time_checker():
+    '''CHECK IF THERES ENOUGH TIME TO WWARMUP FOR LOADED MOVEMENTS'''
+
+    for i in todays_wod:
+        for k, v in exercises.items():
+            if i == k:
+                if v['loaded'] == 'kb' and time_prompt < 5:
+                    print('Theres not enough time to safely warmup for your kettlebell lift. Please enter 5min or more.')
+                    time_prompt_func()
+                    loaded_time_checker()
+                if v['loaded'] == 'barbell' and time_prompt < 10:
+                    print('Theres not enough time to safely warmup for your barbell lift. Please enter 10min or more.')
+                    time_prompt_func()
+                    loaded_time_checker()
+
+def unloaded_time_checker():
+    if time_prompt < 5:
+        print()
+        print('More than 5min is recommended for your workout.')
+        print()
+        time_prompt_func()
+
+
+def what_focus():
+    '''Asks user what their focus of the workout will be. WILL ONLY RUN IF WOD IS >1 MOVEMENT'''
+    focus = input(
+        f'Of your inputted movements: ({todays_wod}), which one movement would you like to warm up the most thoroughly?\n>>>')
+    for j in list(exercises.keys()):
+        if (fuzz.ratio(focus, j)) > 80:
+            focus_of_wod.append(j)
+
+
+
+def check_length_of_wod():
+    '''Checks is the lenght of wod is >1. If so, runs 'what focus'.'''
+    if len(todays_wod) > 1:
+        what_focus()
+        print()
+        print(f'The focus of your workout from your inputted movements {todays_wod} will be {focus_of_wod}')
+    else:
+        focus = todays_wod[0]
+        focus_of_wod.append(focus)
+    print()
+    input('Press Enter to run The Warmup Generator!')
+
+
+def search_for_cat():
+    '''searches the movement database to find categories of exercises'''
+    for w in todays_wod:
+        for k, v in exercises.items():
+            if w.lower() == k.lower():
+                mov_cat.append(v['category'])
+
+
+    print(f'The categories of their movement are {mov_cat}')
+    print()
+    print(spacing)
+
+def find_warmups_from_cat():
+    '''Searches through 'Warmups' dataset using categories and identifies possible warmups to use'''
+    for cat in mov_cat:
+        for k, v in warmups.items():
+            if cat in v['categories']:
+                todays_warmups.append(k)
+
+    print()
+    print(f'The possible bodyweight warmups for today\'s workout are: \n{todays_warmups}')
+    print()
+    print(spacing)
+    print()
+
+
+
+def warmup_counter():
+    '''Tallies warmups and puts them in an unordered dictionary called tally_of_warmups'''
+    for todays_warm in todays_warmups:
+        if todays_warm in tally_of_warmups:
+            tally_of_warmups[todays_warm] += 1
+        else:
+            tally_of_warmups[todays_warm] = 1
+    print('The tally of todays warmups unordered are:')
+    print(tally_of_warmups)
+    print()
+    print(spacing)
+    print()
+
+
+
+def rand_warmup_sets_for_ordered_wu():
+    global dict_of_ordered_wu_rand_reps
+    list_of_ordered_tally = list(ordered_tally.keys())
+    real_rand_warm_reps_list = []
+    for k, v in ordered_tally.items():  ## THIS IS CORRECTLY A LIST. Vaules but too many cause it has all rep variations
+        for r in warmups.keys():
+            if k == r:
+                get_warmup_values = warmups.get(str(k))
+                get_warmup_reps = get_warmup_values.get('reps')
+                rand_warmup_reps = choice(get_warmup_reps)
+                real_rand_warm_reps_list.append(rand_warmup_reps)
+    dict_of_ordered_wu_rand_reps = dict(zip(list_of_ordered_tally, real_rand_warm_reps_list))
+    return dict_of_ordered_wu_rand_reps
+
+
+def list_of_warmup_times():
+    '''Lists times of selected warmups'''
+    for k, v in ordered_tally.items():
+        for k2, v2 in warmups.items():
+            if k == k2:
+                total_bw_time_list.append(v2['time'])
+
+
+def get_random_metcon_warmup():
+    global get_rand_warm_metcon_key
+    global get_rand_warm_metcon_values
+    global get_rand_warm_metcon_reps
+    global get_rand_warm_metcon_time
+    global random_metcon_reps
+    get_rand_warm_metcon_key = random.choice(list(warmup_metcons.keys()))
+    for r in warmup_metcons.keys():
+        if r == get_rand_warm_metcon_key:
+            get_rand_warm_metcon_values = warmup_metcons.get(str(r))
+            get_rand_warm_metcon_reps = get_rand_warm_metcon_values.get('reps')
+            get_rand_warm_metcon_time = get_rand_warm_metcon_values.get('time')
+            random_metcon_reps = random.choice(get_rand_warm_metcon_reps)
+
+
+""" WU GENERATOR INTRO"""
+
+welcome()
+
+time_prompt = 0
 time_prompt_func()
 print()
 
-### GET THE MOVEMENTS IN THE WOD
+""" WU GENERATOR WORKOUT INPUTS"""
 
 todays_wod = []
-
 wod_prompt = (input(
     f'What is one movement is in your workout today? \n\t(Press Enter to add another movement to The Warmup '
     f'Generator) \n\t(Type \'done\' when finished\n>>>'))
@@ -94,72 +216,20 @@ print(spacing)
 print()
 
 
-### CHECK IF THERES ENOUGH TIME TO WWARMUP FOR LOADED MOVEMENTS:
-
-def loaded_time_checker():
-    for i in todays_wod:
-        for k, v in exercises.items():
-            if i == k:
-                if v['loaded'] == 'kb' and time_prompt <= 5:
-                    print('Theres not enough time to safely warmup for your kettlebell lift. Please enter 5min or more.')
-                    time_prompt_func()
-                    loaded_time_checker()
-                if v['loaded'] == 'barbell' and time_prompt <= 10:
-                    print('Theres not enough time to safely warmup for your barbell lift. Please enter 10min or more.')
-                    time_prompt_func()
-                    loaded_time_checker()
+""" CHECK IF THERES ENOUGH TIME FOR LOADED WARMUPS AND UNLOADED WARMUPS"""
 
 loaded_time_checker()
-
-### Check if theres enough time to warmup for bodyweight movements
-
-def unloaded_time_checker():
-    if time_prompt < 5:
-        print()
-        print('More than 5min is recommended for your workout.')
-        print()
-        time_prompt_func()
-
-
 unloaded_time_checker()
 
-## FIGURE OUT WHICH MOVEMENT WILL BE THE FOCUS OF THE WOD:
-
+""" IF THE WOD HAS MORE THAN ONE MOVEMENT... ASK THE USER WHAT THE FOCUS OF THE WOD WILL BE"""
 
 focus_of_wod = []
-
-
-def what_focus():
-    '''Asks user what their focus of the workout will be'''
-    focus = input(
-        f'Of your inputted movements: ({todays_wod}), which one movement would you like to warm up the most thoroughly?\n>>>')
-    for j in list(exercises.keys()):
-        if (fuzz.ratio(focus, j)) > 80:
-            focus_of_wod.append(j)
-
-
-
-def check_length_of_wod():
-    '''Checks is the lenght of wod is >1. If so, runs 'what focus'.'''
-    if len(todays_wod) > 1:
-        what_focus()
-        print()
-        print(f'The focus of your workout from your inputted movements {todays_wod} will be {focus_of_wod}')
-    else:
-        focus = todays_wod[0]
-        focus_of_wod.append(focus)
-    print()
-    input('Press Enter to run The Warmup Generator!')
-
-
 check_length_of_wod()
 
-### IDENTIFY IF FOCUS IS LOADED OR NOT, IF TRUE, ADD 10 or 15:
+""" IF THE WOD HAS MORE THAN ONE MOVEMENT AND THE FOCUS IS LOADED WITH A KB, add 5min, WITH A BB, add 10min"""
+
 print()
-
 focus_item1 = (focus_of_wod[0])
-
-## CHANGE THESE VARS TO BE BETTER. FUTURE UPDATE WILL HAVE A BB AND KB WARMUP OUTPUT BASED ON THE TYPE OF INPUTTED exercises. Oly lift. Strength lift. etc.
 add_time = 0
 added_time = False
 
@@ -173,71 +243,19 @@ else:
     add_time = 0
     added_time = False
 
-
-### GET THE CATEGORIES OF exercises
+""" FIND THE CATEGORIES AND MOVEMENTS FOR THE WARMUP NOW THAT ALL THE CHECKING IS DONE"""
 
 mov_cat = []
-
-
-def search_for_cat():
-    '''searches the movement database to find categories of exercises'''
-    for w in todays_wod:
-        for k, v in exercises.items():
-            if w.lower() == k.lower():
-                mov_cat.append(v['category'])
-
-
-    print(f'The categories of their movement are {mov_cat}')
-    print()
-    print(spacing)
-
-
 search_for_cat()
 
-### IDENTIFY WHICH WARMUPS COULD WORK
-
+""" IDENTIFY WHICH WARMUPS COULD WORK, TALLY THEM UP, ORGANIZE THEM"""
 todays_warmups = []
-
-
-def find_warmups_from_cat():
-    '''Searches through 'Warmups' dataset using categories and identifies possible warmups to use'''
-    for cat in mov_cat:
-        for k, v in warmups.items():
-            if cat in v['categories']:
-                todays_warmups.append(k)
-
-    print()
-    print(f'The possible bodyweight warmups for today\'s workout are: \n{todays_warmups}')
-    print()
-    print(spacing)
-    print()
-
-
 find_warmups_from_cat()
 
-# # ### TALLIES UP WARMUPS TO IDENTIFY WHICH WOULD BE MOST LIKELY TO WORK
-
 tally_of_warmups = {}
-
-
-def warmup_counter():
-    '''Tallies warmups and puts them in an unordered dictionary called tally_of_warmups'''
-    for todays_warm in todays_warmups:
-        if todays_warm in tally_of_warmups:
-            tally_of_warmups[todays_warm] += 1
-        else:
-            tally_of_warmups[todays_warm] = 1
-    print('The tally of todays warmups unordered are:')
-    print(tally_of_warmups)
-    print()
-    print(spacing)
-    print()
-
-
 warmup_counter()
 
-# # ### ORDERS THE TALLY FROM HIGHEST TALLY TO LOWEST TALLY:
-
+"""ORDERS THE TALLY FROM HIGHEST TALLY TO LOWEST TALLY:"""
 
 ordered_tally = {k: v for k, v in sorted(tally_of_warmups.items(), key=lambda item: item[1], reverse=True)}
 
@@ -248,43 +266,15 @@ print()
 print(spacing)
 print()
 
-### Create a new dictionary of k:v pairs with the ordered talley as key and random warmup reps as value. Get those reps!
-
+"""Create a new dictionary of k:v pairs with the ordered talley as key and random warmup reps as value. Get those reps!
+"""
 
 dict_of_ordered_wu_rand_reps = {}
-
-
-def rand_warmup_sets_for_ordered_wu():
-    global dict_of_ordered_wu_rand_reps
-    list_of_ordered_tally = list(ordered_tally.keys())
-    real_rand_warm_reps_list = []
-    for k, v in ordered_tally.items():  ## THIS IS CORRECTLY A LIST. Vaules but too many cause it has all rep variations
-        for r in warmups.keys():
-            if k == r:
-                get_warmup_values = warmups.get(str(k))
-                get_warmup_reps = get_warmup_values.get('reps')
-                rand_warmup_reps = choice(get_warmup_reps)
-                real_rand_warm_reps_list.append(rand_warmup_reps)
-    dict_of_ordered_wu_rand_reps = dict(zip(list_of_ordered_tally, real_rand_warm_reps_list))
-    return dict_of_ordered_wu_rand_reps
-
-
 rand_warmup_sets_for_ordered_wu()
 
-# # ## ADD UP TOTAL TIME OF ORDERED TALLY
+"""ADD UP TOTAL TIME OF ORDERED TALLY"""
 
 total_bw_time_list = []
-
-
-def list_of_warmup_times():
-    '''Lists times of selected warmups'''
-    for k, v in ordered_tally.items():
-        for k2, v2 in warmups.items():
-            if k == k2:
-                total_bw_time_list.append(v2['time'])
-
-
-
 list_of_warmup_times()
 
 print('The list of warmup times is:')
@@ -292,7 +282,7 @@ print(total_bw_time_list)
 print()
 print(spacing)
 
-# ### ADDS UP LIST OF BW TIMES CREATED.
+"""ADDS UP LIST OF BW TIMES CREATED."""
 
 sum_bw_warmup_times = sum(total_bw_time_list)
 
@@ -301,36 +291,20 @@ print('The sum of potential bodyweight warmup times found from the dataset is:')
 print(sum_bw_warmup_times, 'min')
 print(spacing)
 
-####
 
-### RANDOM WARMUP METCON GENERATOR
 
+
+
+''' THIS IS THE BIG CALCULATOR AND OUTPUTTER POPCHECK 2'''
+
+
+
+"""GET RANDOM METCON WARMUP (ONLY ADDED IF THERES ENOUGH TIME)"""
 get_rand_warm_metcon_key = []
 get_rand_warm_metcon_values = []
 get_rand_warm_metcon_reps = []
+get_rand_warm_metcon_time = []
 random_metcon_reps = []
-
-
-def get_random_metcon_warmup():
-    global get_rand_warm_metcon_key
-    global get_rand_warm_metcon_values
-    global get_rand_warm_metcon_reps
-    global get_rand_warm_metcon_time
-    global random_metcon_reps
-    get_rand_warm_metcon_key = random.choice(list(warmup_metcons.keys()))
-    for r in warmup_metcons.keys():
-        if r == get_rand_warm_metcon_key:
-            get_rand_warm_metcon_values = warmup_metcons.get(str(r))
-            get_rand_warm_metcon_reps = get_rand_warm_metcon_values.get('reps')
-            get_rand_warm_metcon_time = get_rand_warm_metcon_values.get('time')
-            random_metcon_reps = random.choice(get_rand_warm_metcon_reps)
-
-
-    # return get_rand_warm_metcon_key
-    # return get_rand_warm_metcon_values
-    # return get_rand_warm_metcon_reps
-    # return get_rand_warm_metcon_time
-    # return random_metcon_reps
 
 
 print()
@@ -357,11 +331,6 @@ def loaded_video_adder():
                     print('yep')
                 else:
                     print('nowww')
-
-
-
-
-''' THIS IS THE BIG CALCULATOR AND OUTPUTTER'''
 
 
 ### Notice the places where everything is identical
@@ -403,13 +372,6 @@ def print_bodyweight_warmups():
     for k, v in dict_of_ordered_wu_rand_reps.items():
         n += 1
         print(f'Warmup', n, ': ', k.title(), 'for', v)
-
-
-##Your full warmup should take {new_loaded} minutes.\n\n
-##\n After you are done with your bodyweight warmup, take {add_time} minutes to warm up your {focus_of_wod}.\n')
-##f'Your {get_rand_warm_metcon_key} should have taken around 1-{get_rand_warm_metcon_time} minutes.\n\n
-# def print_loaded_times(new_sum_loaded, total_bw_time_list, add_time):
-#     print(f'Next, lets move on to your bodyweight portion of the warmup.')
 
 
 def videos_for_user():
