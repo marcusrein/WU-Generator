@@ -8,8 +8,6 @@ Created on Fri Apr 24 06:31:13 2020
 ##TESTERRRR
 
 
-
-
 # import fuzz
 import re
 from random import choice
@@ -27,6 +25,7 @@ warmups = warmups_dataset.get_warmups()
 warmup_metcons = warmups_dataset.get_warmup_metcons()
 
 """ FUNCTION LIST"""
+
 
 def welcome():
     '''Prints welcome message'''
@@ -55,7 +54,6 @@ def welcome():
 #         time_prompt = 30
 
 
-
 def time_prompt_func():
     '''Updates the time_prompt global variable. Asks the 'how much time' question and cleans it up'''
     global time_prompt
@@ -77,13 +75,15 @@ def loaded_time_checker():
         for k, v in exercises.items():
             if i == k:
                 if v['loaded'] == 'kb' and time_prompt < 5:
-                    print('Theres not enough time to safely warmup for your kettlebell lift. Please enter 5min or more.')
+                    print(
+                        'Theres not enough time to safely warmup for your kettlebell lift. Please enter 5min or more.')
                     time_prompt_func()
                     loaded_time_checker()
-                if v['loaded'] == 'barbell' and time_prompt < 10:
-                    print('Theres not enough time to safely warmup for your barbell lift. Please enter 10min or more.')
+                if v['loaded'] == 'barbell' and time_prompt < 15:
+                    print('Theres not enough time to safely warmup for your barbell lift. Please enter 15min or more.')
                     time_prompt_func()
                     loaded_time_checker()
+
 
 def unloaded_time_checker():
     if time_prompt < 5:
@@ -100,7 +100,6 @@ def what_focus():
     for j in list(exercises.keys()):
         if (fuzz.ratio(focus, j)) > 80:
             focus_of_wod.append(j)
-
 
 
 def check_length_of_wod():
@@ -123,10 +122,10 @@ def search_for_cat():
             if w.lower() == k.lower():
                 mov_cat.append(v['category'])
 
-
     print(f'The categories of their movement are {mov_cat}')
     print()
     print(spacing)
+
 
 def find_warmups_from_cat():
     '''Searches through 'Warmups' dataset using categories and identifies possible warmups to use'''
@@ -142,7 +141,6 @@ def find_warmups_from_cat():
     print()
 
 
-
 def warmup_counter():
     '''Tallies warmups and puts them in an unordered dictionary called tally_of_warmups'''
     for todays_warm in todays_warmups:
@@ -155,7 +153,6 @@ def warmup_counter():
     print()
     print(spacing)
     print()
-
 
 
 def rand_warmup_sets_for_ordered_wu():
@@ -224,8 +221,6 @@ while wod_prompt != 'done':
         #     possible_misspelled.append(wod_prompt)
         # TO USE THIS I"LL HAVE TO MAKE THIS WHOLE THING A FUNCTION. DONT WANNA DO TAHT NOW
 
-
-
     wod_prompt = input(
         'Please enter another movement in your workout...\n\t(Press Enter to add another movement to The Warmup '
         'Generator) \n\t(Type \'done\' when finished) \n>>>')
@@ -236,7 +231,6 @@ print(f'The movements in todays wod are {todays_wod}')
 print()
 print(spacing)
 print()
-
 
 """ CHECK IF THERES ENOUGH TIME FOR LOADED WARMUPS AND UNLOADED WARMUPS"""
 
@@ -313,13 +307,7 @@ print('The sum of potential bodyweight warmup times found from the dataset is:')
 print(sum_bw_warmup_times, 'min')
 print(spacing)
 
-
-
-
-
 ''' THIS IS THE BIG CALCULATOR AND OUTPUTTER POPCHECK 2'''
-
-
 
 """GET RANDOM METCON WARMUP (ONLY ADDED IF THERES ENOUGH TIME)"""
 get_rand_warm_metcon_key = []
@@ -327,7 +315,6 @@ get_rand_warm_metcon_values = []
 get_rand_warm_metcon_reps = []
 get_rand_warm_metcon_time = []
 random_metcon_reps = []
-
 
 print()
 print('The new dictionary created to find a randomly generated metcon warmup is this one:\n\n',
@@ -370,22 +357,43 @@ def print_run_warmup():
     input("Press Enter to continue...")
 
 
+add_metcon = False
+
+
 def print_welcome_output():
+    global add_metcon
     print(
         f'<<<The Warmup Generator has Completed Processing>>>\n\nIt has created a tailored warmup for you that fits within your given time of {time_prompt} minutes\n')
-    if time_prompt >= 12 and add_time == 10:
+    if time_prompt >= 20 and add_time == 10:
+        add_metcon = True
         print('The structure of your warmup will be:\n')
-        print(f'1: Short metabolic warmup ({get_rand_warm_metcon_time} minutes). \n2: Bodyweight warmups ({sum(total_bw_time_list) - 3} to {sum(total_bw_time_list)} minutes).\n3: Barbell warmup for your focused lift of {focus_of_wod} (10 minutes).\n')
-    elif time_prompt >= 12 and add_time == 5:
+        print(
+            f'1: Short metabolic warmup ({get_rand_warm_metcon_time} minutes). \n2: Bodyweight warmups ({sum(total_bw_time_list) - 2} to {sum(total_bw_time_list)} minutes).\n3: Barbell warmup for your focused lift of {focus_of_wod} (10 minutes).\n')
+    elif 12 <= time_prompt < 20 and add_time == 10:
         print('The structure of your warmup will be:\n')
-        print(f'1: Short metabolic warmup ({get_rand_warm_metcon_time} minutes). \n2: Bodyweight warmups ({sum(total_bw_time_list) - 3} to {sum(total_bw_time_list)} minutes).\n3: Kettlebell warmup for your focused lift of {focus_of_wod} (5 minutes).\n')
-    elif time_prompt >= 12 and add_time == 0:
+        print(
+            f'1: Bodyweight warmups ({sum(total_bw_time_list) - 2} to {sum(total_bw_time_list)} minutes).\n2: Barbell warmup for your focused lift of {focus_of_wod} (10 minutes).\n')
+    elif time_prompt >= 20 and add_time == 5:
+        add_metcon = True
         print('The structure of your warmup will be:\n')
-        print(f'1: Short metabolic warmup ({get_rand_warm_metcon_time} minutes). \n2: Bodyweight warmups ({sum(total_bw_time_list) - 3} to {sum(total_bw_time_list)} minutes).\n')
+        print(
+            f'1: Short metabolic warmup ({get_rand_warm_metcon_time} minutes). \n2: Bodyweight warmups ({sum(total_bw_time_list) - 2} to {sum(total_bw_time_list)} minutes).\n3: Kettlebell warmup for your focused lift of {focus_of_wod} (5 minutes).\n')
+    elif 12 <= time_prompt < 20 and add_time == 5:
+        print('The structure of your warmup will be:\n')
+        print(
+            f'1: Bodyweight warmups ({sum(total_bw_time_list) - 2} to {sum(total_bw_time_list)} minutes).\n2: Kettlebell warmup for your focused lift of {focus_of_wod} (5 minutes).\n')
+    elif time_prompt < 12 and add_time == 0:
+        add_metcon = True
+        print('The structure of your warmup will be:\n')
+        print(
+            f'1: Short metabolic warmup ({get_rand_warm_metcon_time} minutes). \n2: Bodyweight warmups ({sum(total_bw_time_list) - 2} to {sum(total_bw_time_list)} minutes).\n')
     else:
         print(f'1: Bodyweight warmups ({sum(total_bw_time_list) - 2} to {sum(total_bw_time_list)} minutes).\n')
 
     input('Press enter to begin your warmup...')
+    print()
+    print(spacing)
+    print()
 
 
 def print_bodyweight_warmups():
@@ -414,11 +422,11 @@ def videos_for_user():
 
 
 def check_time_add_wu_metcon():
-    if time_prompt >= 12:
-        print('Perform:',get_rand_warm_metcon_key.title(), 'for', random_metcon_reps)
+    global add_metcon
+    if add_metcon:
+        print('Perform:', get_rand_warm_metcon_key.title(), 'for', random_metcon_reps)
         print()
         input('Press enter to move onto your bodyweight warmups...')
-
 
 
 def loaded_video_adder():
@@ -426,25 +434,25 @@ def loaded_video_adder():
         for k, v in exercises.items():
             if w.lower() == k.lower():
                 if v['category'] == 'cleans':
-                    print('Do this',w,'warmup:')
+                    print('Do this', w, 'warmup:')
                     print(v['reg_warm'])
                 elif v['category'] == 'presses':
-                    print('Do this',w,'warmup:')
+                    print('Do this', w, 'warmup:')
                     print(v['reg_warm'])
                 elif v['category'] == 'jerks':
-                    print('Do this',w,'warmup:')
+                    print('Do this', w, 'warmup:')
                     print(v['reg_warm'])
                 elif v['category'] == 'deadlifts':
                     print('Do this', w, 'warmup:')
                     print(v['reg_warm'])
                 elif v['category'] == 'kettlebells':
-                    print('Do this',w,'warmup:')
+                    print('Do this', w, 'warmup:')
                     print(v['reg_warm'])
                 elif v['category'] == 'squats':
-                    print('Do this',w,'warmup:')
+                    print('Do this', w, 'warmup:')
                     print(v['reg_warm'])
                 elif v['category'] == 'snatches':
-                    print('Do this',w,'warmup:')
+                    print('Do this', w, 'warmup:')
                     print(v['reg_warm'])
                 else:
                     print('nowww')
@@ -458,7 +466,7 @@ def check_pop_loaded():
         dict_of_ordered_wu_rand_reps.popitem()
         total_bw_time_list.pop()
         new_sum_loaded = add_time + sum(total_bw_time_list) + get_rand_warm_metcon_time
-        if new_sum_loaded >= time_prompt:
+        if new_sum_loaded > time_prompt:
             # print('peee')
             pop_check2()
         else:
