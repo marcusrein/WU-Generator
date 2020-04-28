@@ -35,40 +35,47 @@ def welcome():
     print(big_spacing)
 
 def time_prompt_func():
-    '''Updates the time_prompt global variable. Asks the 'how much time' question and cleans it up'''
+    '''Creates time prompt based on intensity'''
     global time_prompt
-    time_prompt_q = input('What is the max amount of minutes you can warmup today?\n>>>')
-    re.sub('[abcdefghijklmnopqrstuvwzyz: ]', '', time_prompt_q)
-    time_prompt_q = re.sub('[abcdefghijklmnopqrstuvwzyz: ]', '', time_prompt_q)
-    if time_prompt_q.isdigit():
-        time_prompt = int(time_prompt_q)
-    else:
-        print('You didn\'t enter your max minutes. Try again!')
-        time_prompt_func()
-    return time_prompt
+    if wod_intensity == 'low':
+        time_prompt = 10
+    elif wod_intensity == 'medium':
+        time_prompt = 15
+    elif wod_intensity == 'high':
+        time_prompt = 30
+    # global time_prompt
+    # time_prompt_q = input('What is the max amount of minutes you can warmup today?\n>>>')
+    # re.sub('[abcdefghijklmnopqrstuvwzyz: ]', '', time_prompt_q)
+    # time_prompt_q = re.sub('[abcdefghijklmnopqrstuvwzyz: ]', '', time_prompt_q)
+    # if time_prompt_q.isdigit():
+    #     time_prompt = int(time_prompt_q)
+    # else:
+    #     print('You didn\'t enter your max minutes. Try again!')
+    #     time_prompt_func()
+    # return time_prompt
 
 
-def loaded_time_checker():
-    '''CHECK IF THERES ENOUGH TIME TO WWARMUP FOR LOADED MOVEMENTS'''
+# def loaded_time_checker():
+#     '''CHECK IF THERES ENOUGH TIME TO WWARMUP FOR LOADED MOVEMENTS'''
 
-    for i in todays_wod:
-        for k, v in exercises.items():
-            if i == k:
-                if v['loaded'] == 'kb' and time_prompt < 5:
-                    print('Theres not enough time to safely warmup for your kettlebell lift. Please enter 5min or more.')
-                    time_prompt_func()
-                    loaded_time_checker()
-                if v['loaded'] == 'barbell' and time_prompt < 10:
-                    print('Theres not enough time to safely warmup for your barbell lift. Please enter 10min or more.')
-                    time_prompt_func()
-                    loaded_time_checker()
+#     for i in todays_wod:
+#         for k, v in exercises.items():
+#             if i == k:
+#                 if v['loaded'] == 'kb' and time_prompt < 5:
+#                     print('Theres not enough time to safely warmup for your kettlebell lift. Please enter 5min or more.')
+#                     time_prompt_func()
+#                     loaded_time_checker()
+#                 if v['loaded'] == 'barbell' and time_prompt < 10:
+#                     print('Theres not enough time to safely warmup for your barbell lift. Please enter 10min or more.')
+#                     time_prompt_func()
+#                     loaded_time_checker()
 
-def unloaded_time_checker():
-    if time_prompt < 5:
-        print()
-        print('More than 5min is recommended for your workout.')
-        print()
-        time_prompt_func()
+# def unloaded_time_checker():
+#     if time_prompt < 5:
+#         print()
+#         print('More than 5min is recommended for your workout.')
+#         print()
+#         time_prompt_func()
 
 
 def what_focus():
@@ -137,6 +144,7 @@ def warmup_counter():
 
 
 def rand_warmup_sets_for_ordered_wu():
+    '''creates a dict of random warmup with their associated random sets of movement'''
     global dict_of_ordered_wu_rand_reps
     list_of_ordered_tally = list(ordered_tally.keys())
     real_rand_warm_reps_list = []
@@ -152,7 +160,7 @@ def rand_warmup_sets_for_ordered_wu():
 
 
 def list_of_warmup_times():
-    '''Lists times of selected warmups'''
+    '''Lists times of identified warmups'''
     for k, v in ordered_tally.items():
         for k2, v2 in warmups.items():
             if k == k2:
@@ -160,6 +168,7 @@ def list_of_warmup_times():
 
 
 def get_random_metcon_warmup():
+    '''Finds a random warmup metcon'''
     global get_rand_warm_metcon_key
     global get_rand_warm_metcon_values
     global get_rand_warm_metcon_reps
@@ -172,6 +181,16 @@ def get_random_metcon_warmup():
             get_rand_warm_metcon_reps = get_rand_warm_metcon_values.get('reps')
             get_rand_warm_metcon_time = get_rand_warm_metcon_values.get('time')
             random_metcon_reps = random.choice(get_rand_warm_metcon_reps)
+
+
+while True:
+    wod_intensity = input(f'What is the intensity of your WOD today? Please enter \'Low\', \'Medium\', or \'High\'\n>>>')
+    if wod_intensity.lower() not in ('low', 'medium', 'high'):
+        print('Please enter the correct information!')
+    else:
+        break
+
+print(wod_intensity)
 
 
 """ WU GENERATOR INTRO"""
@@ -216,10 +235,10 @@ print(spacing)
 print()
 
 
-""" CHECK IF THERES ENOUGH TIME FOR LOADED WARMUPS AND UNLOADED WARMUPS"""
+""" CHECK IF THERES ENOUGH TIME FOR LOADED WARMUPS AND UNLOADED WARMUPS"""### maybe not needed now that low med high is in workout
 
-loaded_time_checker()
-unloaded_time_checker()
+# loaded_time_checker()
+# unloaded_time_checker()
 
 """ IF THE WOD HAS MORE THAN ONE MOVEMENT... ASK THE USER WHAT THE FOCUS OF THE WOD WILL BE"""
 
@@ -234,10 +253,10 @@ add_time = 0
 added_time = False
 
 if exercises[focus_item1]['loaded'] == 'barbell':
-    add_time += 10
+    add_time += 8
     added_time = True
 elif exercises[focus_item1]['loaded'] == 'kb':
-    add_time += 5
+    add_time += 3
     added_time = True
 else:
     add_time = 0
@@ -284,14 +303,12 @@ print(spacing)
 
 """ADDS UP LIST OF BW TIMES CREATED."""
 
-sum_bw_warmup_times = sum(total_bw_time_list)
+sum_total_bw_time_list = sum(total_bw_time_list)
 
 print()
 print('The sum of potential bodyweight warmup times found from the dataset is:')
-print(sum_bw_warmup_times, 'min')
+print(sum_total_bw_time_list, 'min')
 print(spacing)
-
-
 
 
 
@@ -303,7 +320,7 @@ print(spacing)
 get_rand_warm_metcon_key = []
 get_rand_warm_metcon_values = []
 get_rand_warm_metcon_reps = []
-get_rand_warm_metcon_time = []
+get_rand_warm_metcon_time = 0
 random_metcon_reps = []
 
 
@@ -350,18 +367,28 @@ def print_run_warmup():
 
 def print_welcome_output():
     print(
-        f'<<<The Warmup Generator has Completed Processing>>>\n\nIt has created a tailored warmup for you that fits within your given time of {time_prompt} minutes\n')
-    if time_prompt >= 12 and add_time == 10:
+        f'<<<The Warmup Generator has Completed Processing>>>\n\nIt has created a tailored warmup that should take {time_prompt} minutes\n')
+    if wod_intensity == 'low' and add_time == 10:
         print('The structure of your warmup will be:\n')
-        print(f'1: Short metabolic warmup ({get_rand_warm_metcon_time} minutes). \n2: Bodyweight warmups ({sum(total_bw_time_list) - 3} to {sum(total_bw_time_list)} minutes).\n3: Barbell warmup for your focused lift of {focus_of_wod} (10 minutes).\n')
-    elif time_prompt >= 12 and add_time == 5:
+        print(f'\n1: Bodyweight warmups ({sum(total_bw_time_list) - 3} to {sum(total_bw_time_list)} minutes).\n2: Barbell warmup for your focused lift of {focus_of_wod} (10 min).\n')
+    elif wod_intensity == 'low' and add_time == 5:
         print('The structure of your warmup will be:\n')
-        print(f'1: Short metabolic warmup ({get_rand_warm_metcon_time} minutes). \n2: Bodyweight warmups ({sum(total_bw_time_list) - 3} to {sum(total_bw_time_list)} minutes).\n3: Kettlebell warmup for your focused lift of {focus_of_wod} (5 minutes).\n')
-    elif time_prompt >= 12 and add_time == 0:
+        print(f'\n1: Bodyweight warmups ({sum(total_bw_time_list) - 3} to {sum(total_bw_time_list)} minutes).\n2: Kettlebell warmup for your focused lift of {focus_of_wod} (5 min).\n')
+    elif wod_intensity == 'low' and add_time == 0:
         print('The structure of your warmup will be:\n')
-        print(f'1: Short metabolic warmup ({get_rand_warm_metcon_time} minutes). \n2: Bodyweight warmups ({sum(total_bw_time_list) - 3} to {sum(total_bw_time_list)} minutes).\n')
-    else:
-        print(f'1: Bodyweight warmups ({sum(total_bw_time_list) - 2} to {sum(total_bw_time_list)} minutes).\n')
+        print(f'1: Short metabolic warmup ({get_rand_warm_metcon_time} minutes). \n2: Bodyweight warmups ({sum(total_bw_time_list) - 3} to {sum(total_bw_time_list)} minutes).')
+    
+
+
+    elif wod_intensity == 'medium' or wod_intensity == 'high' and add_time == 10:
+        print('The structure of your warmup will be:\n')
+        print(f'1: Short metabolic warmup ({get_rand_warm_metcon_time} minutes). \n2: Bodyweight warmups ({sum(total_bw_time_list) - 3} to {sum(total_bw_time_list)} minutes).\n3: Barbell warmup for your focused lift of {focus_of_wod} (10 min).\n')
+    elif wod_intensity == 'medium' or wod_intensity == 'high' and add_time == 5:
+        print('The structure of your warmup will be:\n')
+        print(f'1: Short metabolic warmup ({get_rand_warm_metcon_time} minutes). \n2: Bodyweight warmups ({sum(total_bw_time_list) - 3} to {sum(total_bw_time_list)} minutes).\n3: Kettlebell warmup for your focused lift of {focus_of_wod} (5 min).\n')
+    elif wod_intensity == 'medium' or wod_intensity == 'high' and add_time == 0:
+        print('The structure of your warmup will be:\n')
+        print(f'1: Short metabolic warmup ({get_rand_warm_metcon_time} minutes). \n2: Bodyweight warmups ({sum(total_bw_time_list) - 3} to {sum(total_bw_time_list)} minutes).')
 
     input('Press enter to begin your warmup...')
 
@@ -390,12 +417,39 @@ def videos_for_user():
         print()
         input('Press Enter when done with your bodyweight warmup...')
 
+### CLEAN THIS UP###
+
+add_metcon = False
 
 def check_time_add_wu_metcon():
-    if time_prompt >= 12:
+    global add_metcon
+    if wod_intensity == 'low' and add_time == 0:
+        add_metcon = True
         print('Perform:',get_rand_warm_metcon_key.title(), 'for', random_metcon_reps)
         print()
         input('Press enter to move onto your bodyweight warmups...')
+    elif wod_intensity == 'medium' or wod_intensity == 'high' and add_time == 10:
+        add_metcon = True
+        print('Perform:',get_rand_warm_metcon_key.title(), 'for', random_metcon_reps)
+        print()
+        input('Press enter to move onto your bodyweight warmups...')
+    elif wod_intensity == 'medium' or wod_intensity == 'high' and add_time == 5:
+        add_metcon = True
+        print('Perform:',get_rand_warm_metcon_key.title(), 'for', random_metcon_reps)
+        print()
+        input('Press enter to move onto your bodyweight warmups...')
+    elif wod_intensity == 'medium' or wod_intensity == 'high' and add_time == 0:
+        add_metcon = True
+        print('Perform:',get_rand_warm_metcon_key.title(), 'for', random_metcon_reps)
+        print()
+        input('Press enter to move onto your bodyweight warmups...')
+
+
+    
+#     if time_prompt >= 12:
+#         print('Perform:',get_rand_warm_metcon_key.title(), 'for', random_metcon_reps)
+#         print()
+#         input('Press enter to move onto your bodyweight warmups...')
 
 
 
@@ -427,15 +481,37 @@ def loaded_video_adder():
                 else:
                     print('nowww')
 
+print(type(sum_total_bw_time_list))
+print(type(add_time))
+print(type(get_rand_warm_metcon_time))
+
+print(sum_total_bw_time_list)
+print(add_time)
+print(get_rand_warm_metcon_time)
+print(big_spacing)
 
 def check_pop_loaded():
     new_sum_loaded = 0
-    get_random_metcon_warmup()
-    if sum_bw_warmup_times + add_time + get_rand_warm_metcon_time > time_prompt:
+    if add_metcon == True:
+        get_random_metcon_warmup()
+    if sum_total_bw_time_list + add_time + get_rand_warm_metcon_time > time_prompt:
         # print('pooo')
         dict_of_ordered_wu_rand_reps.popitem()
         total_bw_time_list.pop()
         new_sum_loaded = add_time + sum(total_bw_time_list) + get_rand_warm_metcon_time
+
+        print()
+        print('dict of ordered wu and reps:')
+        print(dict_of_ordered_wu_rand_reps)
+        print('add time:')
+        print(add_time)
+        print('sum(total bw times)')
+        print(sum(total_bw_time_list))
+        print('newsum loaded:')
+        print(new_sum_loaded)
+        print('timeprompt:')
+        print(time_prompt)
+        print()
         if new_sum_loaded >= time_prompt:
             # print('peee')
             pop_check2()
@@ -467,7 +543,7 @@ def check_pop_loaded():
 def check_pop_unloaded():
     new_sum_unloaded = 0
     get_random_metcon_warmup()
-    if sum_bw_warmup_times > time_prompt:
+    if sum_total_bw_time_list > time_prompt:
         # print('pyeeasdf')
         dict_of_ordered_wu_rand_reps.popitem()
         total_bw_time_list.pop()
