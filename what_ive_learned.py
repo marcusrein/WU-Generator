@@ -62,8 +62,14 @@
 #
 # ## 4/29: Stuck at where to go from here...
 # 1. Relearn HTML and CSS and develop a website... though I see this as an app before a website bc people can bring their phones to the gym
+# --App development is very challenging. Married to that platform. Not generalizable to other platforms very easily. Python is very generlizable
+# --Brand myself with this program.
+#
 # 2. Redo WU Gen cleaner? Knowing what I know now I could totally try to recode it to be more modular but I wouldn't have moved on to developing front end'
 # 3. Continue with Flask? It is a good thing yes but its developing for computer code, not app code.
+### --- Start with the ugliest user interface.
+#
+
 #
 #
 # ##BUGS
